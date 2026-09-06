@@ -1,0 +1,42 @@
+spring:
+
+  application:
+    name: weather-aggregator-service
+
+  cache:
+    type: caffeine
+    cache-names:
+      - weather
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10m
+
+
+server:
+  port: 8080
+
+
+weather:
+
+  open-meteo:
+
+    geocoding-url: https://geocoding-api.open-meteo.com
+
+    forecast-url: https://api.open-meteo.com
+
+
+management:
+
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - metrics
+          - caches
+
+
+springdoc:
+
+  swagger-ui:
+    path: /swagger-ui.html
