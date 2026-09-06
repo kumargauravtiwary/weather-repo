@@ -2,7 +2,6 @@ package com.example.weather.client;
 
 import com.example.weather.exception.ExternalWeatherApiException;
 import com.example.weather.exception.LocationNotFoundException;
-
 import com.example.weather.model.ForecastResponse;
 import com.example.weather.model.GeocodingResponse;
 
@@ -20,18 +19,18 @@ public class OpenMeteoClient {
 
     private final String forecastUrl;
 
-
     public OpenMeteoClient(
-
             WebClient webClient,
 
-            @Value("${weather.open-meteo.geocoding-url}")
+            @Value(
+                "${weather.providers.open-meteo.geocoding-url}"
+            )
             String geocodingUrl,
 
-            @Value("${weather.open-meteo.forecast-url}")
-            String forecastUrl
-
-    ) {
+            @Value(
+                "${weather.providers.open-meteo.forecast-url}"
+            )
+            String forecastUrl) {
 
         this.webClient = webClient;
 
@@ -40,15 +39,12 @@ public class OpenMeteoClient {
         this.forecastUrl = forecastUrl;
     }
 
-
     public GeocodingResponse.Location geocode(
-            String city
-    ) {
+            String city) {
 
         try {
 
             GeocodingResponse response =
-
                     webClient
 
                             .get()
@@ -74,49 +70,33 @@ public class OpenMeteoClient {
 
                             .block();
 
-
-            if (
-
-                    response == null
-
-                    || response.results() == null
-
-                    || response.results().isEmpty()
-
-            ) {
+            if (response == null ||
+                    response.results() == null ||
+                    response.results().isEmpty()) {
 
                 throw new LocationNotFoundException(
                         "City not found: " + city
                 );
             }
 
-
             return response.results().get(0);
 
-        }
-
-        catch (LocationNotFoundException ex) {
+        } catch (LocationNotFoundException ex) {
 
             throw ex;
-        }
 
-        catch (Exception ex) {
+        } catch (Exception ex) {
 
             throw new ExternalWeatherApiException(
-                    "Geocoding API failed",
+                    "Open-Meteo geocoding failed",
                     ex
             );
         }
     }
 
-
     public ForecastResponse getForecast(
-
             double latitude,
-
-            double longitude
-
-    ) {
+            double longitude) {
 
         try {
 
@@ -139,7 +119,6 @@ public class OpenMeteoClient {
                                     + "&timezone=auto",
 
                             latitude,
-
                             longitude
 
                     )
@@ -152,12 +131,10 @@ public class OpenMeteoClient {
 
                     .block();
 
-        }
-
-        catch (Exception ex) {
+        } catch (Exception ex) {
 
             throw new ExternalWeatherApiException(
-                    "Forecast API failed",
+                    "Open-Meteo forecast failed",
                     ex
             );
         }

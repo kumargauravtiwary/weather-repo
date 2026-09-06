@@ -4,8 +4,7 @@ public class LocationNotFoundException
         extends RuntimeException {
 
     public LocationNotFoundException(
-            String message
-    ) {
+            String message) {
 
         super(message);
     }

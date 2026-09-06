@@ -4,12 +4,8 @@ public class ExternalWeatherApiException
         extends RuntimeException {
 
     public ExternalWeatherApiException(
-
             String message,
-
-            Throwable cause
-
-    ) {
+            Throwable cause) {
 
         super(message, cause);
     }

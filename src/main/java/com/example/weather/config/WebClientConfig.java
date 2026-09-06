@@ -1,6 +1,7 @@
 package com.example.weather.config;
 
 import io.netty.channel.ChannelOption;
+
 import reactor.netty.http.client.HttpClient;
 
 import org.springframework.context.annotation.Bean;
@@ -16,7 +17,8 @@ import java.time.Duration;
 public class WebClientConfig {
 
     @Bean
-    public WebClient webClient(WebClient.Builder builder) {
+    public WebClient webClient(
+            WebClient.Builder builder) {
 
         HttpClient httpClient =
                 HttpClient.create()
@@ -33,7 +35,9 @@ public class WebClientConfig {
         return builder
 
                 .clientConnector(
-                        new ReactorClientHttpConnector(httpClient)
+                        new ReactorClientHttpConnector(
+                                httpClient
+                        )
                 )
 
                 .build();

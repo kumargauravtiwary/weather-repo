@@ -3,12 +3,17 @@ spring:
   application:
     name: weather-aggregator-service
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2s
+
   cache:
-    type: caffeine
-    cache-names:
-      - weather
-    caffeine:
-      spec: maximumSize=500,expireAfterWrite=10m
+    type: redis
+    redis:
+      time-to-live: 10m
+      cache-null-values: false
 
 
 server:
@@ -17,11 +22,65 @@ server:
 
 weather:
 
-  open-meteo:
+  providers:
 
-    geocoding-url: https://geocoding-api.open-meteo.com
+    open-meteo:
+      geocoding-url: https://geocoding-api.open-meteo.com
+      forecast-url: https://api.open-meteo.com
 
-    forecast-url: https://api.open-meteo.com
+    weather-api:
+      url: https://api.weatherapi.com/v1/current.json
+      api-key: ${WEATHER_API_KEY:}
+
+
+resilience4j:
+
+  retry:
+
+    instances:
+
+      openMeteo:
+        max-attempts: 3
+        wait-duration: 500ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+
+      weatherApi:
+        max-attempts: 2
+        wait-duration: 500ms
+
+
+  circuitbreaker:
+
+    instances:
+
+      openMeteo:
+
+        sliding-window-type: COUNT_BASED
+
+        sliding-window-size: 10
+
+        minimum-number-of-calls: 5
+
+        failure-rate-threshold: 50
+
+        wait-duration-in-open-state: 30s
+
+        permitted-number-of-calls-in-half-open-state: 2
+
+        automatic-transition-from-open-to-half-open-enabled: true
+
+      weatherApi:
+
+        sliding-window-type: COUNT_BASED
+
+        sliding-window-size: 10
+
+        minimum-number-of-calls: 5
+
+        failure-rate-threshold: 50
+
+        wait-duration-in-open-state: 30s
 
 
 management:
@@ -34,6 +93,10 @@ management:
           - info
           - metrics
           - caches
+
+  endpoint:
+    health:
+      show-details: always
 
 
 springdoc:

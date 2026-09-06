@@ -16,14 +16,11 @@ public class WeatherController {
 
     private final WeatherService weatherService;
 
-
     public WeatherController(
-            WeatherService weatherService
-    ) {
+            WeatherService weatherService) {
 
         this.weatherService = weatherService;
     }
-
 
     @GetMapping
     public WeatherResponse getWeather(
@@ -34,9 +31,7 @@ public class WeatherController {
                     message = "city must not be blank"
             )
 
-            String city
-
-    ) {
+            String city) {
 
         return weatherService.getWeather(city);
     }
